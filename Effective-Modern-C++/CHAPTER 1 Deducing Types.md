@@ -139,8 +139,6 @@ f(ptr);                         //传递const char * const类型的实参
 - 像这种情况，`ptr`**自身的值会被传给形参**，根据类型推导的第三条规则，`ptr`自身的常量性`const`ness将会被省略，所以`param`是`const char*`
 - 在类型推导中，这个指针指向的数据的常量性`const`ness将会被保留，但是当拷贝`ptr`来创造一个新指针`param`时，`ptr`自身的常量性`const`ness将会被忽略。
 
-
-
 ---
 
 
@@ -177,7 +175,7 @@ void f(T& param);                       //传引用形参的模板
 f(name);                                //T被推导为const char[13]
 ```
 
-借助可声明指向数组的引用的能力，使得我们可以创建一个模板函数来推导出数组的大小
+借助可声明指向数组的引用的能力，使得我们可以**创建一个模板函数来推导出数组的大小**
 
 ```cpp
 //在编译期间返回一个数组大小的常量值（//数组形参没有名字，
@@ -290,6 +288,17 @@ auto x3 = { 27 };               //类型是std::initializer_list<int>，
                                 //值是{ 27 }
 auto x4{ 27 };                  //同上
 ```
+
+> [!warning]
+>
+> `auto x4{27}` 在书中称 `auto` 推导出 `std::initializer_list<int>`。然而，在 [N3922](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3922.html) 之后，将会推导出 `int`。
+>
+> ```cpp
+> auto x1 = {3}; // x1 is std::initializer_list<int>
+> auto x2{1, 2}; // error: not a single element
+> auto x3{3};    // x3 is int
+>                // (before N3922 x2 and x3 were both std::initializer_list<int>)
+> ```
 
 ```cpp
 auto x5 = { 1, 2, 3.0 };        //错误！无法推导std::initializer_list<T>中的T
